@@ -169,6 +169,7 @@
   /* Entries */
   .entry-wrap.el-hidden { display:none; }
   .entry { display:flex; align-items:center; gap:0.75rem; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.2rem; transition:background 0.12s, border-color 0.12s; border:1px solid transparent; border-left-width:3px; }
+  .entry.panel-open { border-radius:6px 6px 0 0; margin-bottom:0; }
   .entry:hover { background:var(--surface); }
   .entry.is-got { background:rgba(166,227,161,0.05); border-left-color:rgba(166,227,161,0.3); }
   .entry.is-got:hover { background:rgba(166,227,161,0.08); }
@@ -194,21 +195,24 @@
   .wish-btn:hover { border-color:var(--wish); color:var(--wish); }
   .wish-btn.prioritized { border-color:var(--wish); color:var(--wish); background:rgba(249,226,175,0.1); }
   .res-head-icon { width:28px; height:28px; border-radius:50%; object-fit:cover; flex-shrink:0; background:var(--surface2); }
+  .entry.panel-open { border-radius:6px; margin-bottom:0.2rem; }
+  .seq-toggle-wrap { position:relative; flex-shrink:0; }
   .seq-toggle { width:22px; height:22px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; font-weight:500; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; }
   .seq-toggle:hover { border-color:var(--accent); color:var(--accent); }
   .seq-toggle.open  { border-color:var(--accent); color:var(--accent); background:rgba(203,166,247,0.08); }
   .entry.is-skip .seq-toggle { opacity:0.3; pointer-events:none; }
-  .seq-panel { display:none; align-items:center; gap:0.25rem; padding:0.35rem 0.6rem 0.35rem 2.8rem; }
+  .seq-panel { display:none; position:absolute; top:calc(100% + 4px); right:0; z-index:50; align-items:center; gap:0.25rem; padding:0.3rem 0.5rem; background:var(--surface2); border:1px solid var(--border); border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); white-space:nowrap; }
   .seq-panel.open { display:flex; }
   .seq-label { font-size:0.6rem; color:var(--muted); font-family:'JetBrains Mono',monospace; margin-right:0.15rem; }
   .seq-btn { width:22px; height:22px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; padding:0; }
   .seq-btn:hover { border-color:var(--accent); color:var(--accent); }
   .seq-btn.active { background:var(--accent); border-color:var(--accent); color:#1e1e2e; font-weight:600; }
+  .wep-toggle-wrap { position:relative; flex-shrink:0; }
   .wep-toggle { width:22px; height:22px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; font-weight:500; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; }
   .wep-toggle:hover { border-color:var(--sig); color:var(--sig); }
   .wep-toggle.open  { border-color:var(--sig); color:var(--sig); background:rgba(137,180,250,0.08); }
   .entry.is-skip .wep-toggle { opacity:0.3; pointer-events:none; }
-  .wep-panel { display:none; align-items:center; gap:0.25rem; padding:0.35rem 0.6rem 0.35rem 2.8rem; }
+  .wep-panel { display:none; position:absolute; top:calc(100% + 4px); right:0; z-index:50; align-items:center; gap:0.25rem; padding:0.3rem 0.5rem; background:var(--surface2); border:1px solid var(--border); border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); white-space:nowrap; }
   .wep-panel.open { display:flex; }
   .wep-btn { width:22px; height:22px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; padding:0; }
   .wep-btn:hover { border-color:var(--sig); color:var(--sig); }
@@ -265,8 +269,8 @@
   .snap-stat-num.res { color:var(--got); }
   .snap-stat-num.sig { color:var(--sig); }
   .snap-stat-label { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
-  .snap-ver-grid { display:grid; grid-template-columns:1fr 1.4fr 0.85fr; gap:0; align-items:start; }
-  .snap-ver-col { padding:0 0.7rem; border-right:1px solid var(--border); }
+  .snap-ver-grid { display:grid; grid-template-columns:1fr 1.4fr 0.85fr; gap:0; align-items:stretch; }
+  .snap-ver-col { padding:0 0.7rem; border-right:1px solid var(--border); display:flex; flex-direction:column; }
   .snap-ver-col:first-child { padding-left:0; }
   .snap-ver-col:last-child  { border-right:none; padding-right:0; }
   .snap-ver-label { font-family:'JetBrains Mono',monospace; font-size:0.56rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.15em; margin-bottom:0.45rem; white-space:nowrap; }
@@ -277,6 +281,7 @@
   .snap-row-name { font-size:0.74rem; font-weight:500; flex:1; color:var(--text); white-space:nowrap; }
   .snap-row.obtained .snap-row-name { color:var(--got); }
   .snap-el-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .snap-head-icon { width:18px; height:18px; border-radius:50%; object-fit:cover; flex-shrink:0; }
   .snap-sig { font-family:'JetBrains Mono',monospace; font-size:0.5rem; color:var(--sig); border:1px solid rgba(137,180,250,0.3); padding:0.02rem 0.22rem; border-radius:3px; background:rgba(137,180,250,0.08); flex-shrink:0; white-space:nowrap; }
   .snap-seq { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--accent); border:1px solid rgba(203,166,247,0.3); padding:0.05rem 0.28rem; border-radius:3px; background:rgba(203,166,247,0.08); flex-shrink:0; white-space:nowrap; }
   @media (max-width:600px) {
@@ -476,6 +481,7 @@ const HARDCODED = [
     { id:25, ver:"3.0", name:"Mornye",       element:"Fusion"  },
     { id:26, ver:"3.1", name:"Aemeath",      element:"Fusion"  },
     { id:27, ver:"3.1", name:"Luuk Herssen", element:"Spectro" },
+    { id:28, ver:"3.1", name:"Sigrika",      element:"Aero"    },
   ]},
 ];
 
@@ -872,47 +878,65 @@ function render() {
       if(!state[e.id]) state[e.id]={res:false,sig:false,seq:0,wep:0};
       if(state[e.id].wep===undefined) state[e.id].wep=0;
       const s=state[e.id];
-      const row=document.createElement('div');
-      row.className=`entry ${s.res?'is-got':'is-skip'}`; row.id=`entry-${e.id}`;
-      let seqBtns='';
-      for(let i=0;i<=6;i++) seqBtns+=`<button class="seq-btn ${s.seq===i?'active':''}" id="seq-${e.id}-${i}" onclick="setSeq(${e.id},${i})">${i}</button>`;
-      let wepBtns='';
-      for(let i=1;i<=5;i++) wepBtns+=`<button class="wep-btn ${s.wep===i?'active':''}" id="wep-${e.id}-${i}" onclick="setWep(${e.id},${i})">${i}</button>`;
       const wled=isPrioritized(e.id);
       const entryWrap=document.createElement('div'); entryWrap.className='entry-wrap'; entryWrap.id=`wrap-${e.id}`;
-      row.innerHTML=`
-        <div class="cb-wrap">
-          <input type="checkbox" class="cb cb-res" id="res-${e.id}" ${s.res?'checked':''}> 
-        </div>
-        <img class="res-head-icon" src="icons/head_${e.name.replace(/[^a-zA-Z0-9]/g,'_')}.webp" alt="" onerror="this.style.display='none'">
-        <div class="res-info">
-          <span class="res-name">${e.name}</span>
-          ${e.element?`<span class="badge el-${e.element.toLowerCase()}"><img class="badge-icon" src="icons/icon_${e.element}.webp" alt="${e.element}" onerror="this.style.display='none'">${e.element}</span>`:''}
-        </div>
-        <button class="seq-toggle" id="seq-toggle-${e.id}" title="Sequence">S${s.seq>0?s.seq:''}</button>
-        <button class="wep-toggle" id="wep-toggle-${e.id}" title="Weapon rank">R${s.wep>0?s.wep:''}</button>
-        <button class="wish-btn ${wled?'prioritized':''}" id="wish-btn-${e.id}" title="Priority" onclick="togglePriority(${e.id})">★</button>
-      `;
-      const panel=document.createElement('div'); panel.className=`seq-panel`; panel.id=`seq-panel-${e.id}`;
-      panel.innerHTML=`<span class="seq-label">seq</span>${seqBtns}`;
-      const wepPanel=document.createElement('div'); wepPanel.className=`wep-panel`; wepPanel.id=`wep-panel-${e.id}`;
-      wepPanel.innerHTML=`<span class="seq-label" style="color:var(--sig)">rank</span>${wepBtns}`;
-      entryWrap.appendChild(row); entryWrap.appendChild(panel); entryWrap.appendChild(wepPanel);
-      row.querySelector(`#seq-toggle-${e.id}`).addEventListener('click',()=>{
-        const t=document.getElementById(`seq-toggle-${e.id}`),p=document.getElementById(`seq-panel-${e.id}`);
-        const wp=document.getElementById(`wep-panel-${e.id}`),wt=document.getElementById(`wep-toggle-${e.id}`);
-        if(wp.classList.contains('open')){wp.classList.remove('open');wt.classList.remove('open');}
-        const open=p.classList.toggle('open'); t.classList.toggle('open',open);
+
+      // Build row
+      const row=document.createElement('div');
+      row.className=`entry ${s.res?'is-got':'is-skip'}`; row.id=`entry-${e.id}`;
+
+      // checkbox
+      const cbWrap=document.createElement('div'); cbWrap.className='cb-wrap';
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.className='cb cb-res'; cb.id=`res-${e.id}`; cb.checked=!!s.res;
+      cbWrap.appendChild(cb);
+
+      // head icon
+      const headImg=document.createElement('img'); headImg.className='res-head-icon';
+      headImg.src=`icons/head_${e.name.replace(/[^a-zA-Z0-9]/g,'_')}.webp`; headImg.alt='';
+      headImg.onerror=function(){this.style.display='none';};
+
+      // name + badge
+      const resInfo=document.createElement('div'); resInfo.className='res-info';
+      resInfo.innerHTML=`<span class="res-name">${e.name}</span>${e.element?`<span class="badge el-${e.element.toLowerCase()}"><img class="badge-icon" src="icons/icon_${e.element}.webp" alt="${e.element}" onerror="this.style.display='none'">${e.element}</span>`:''}`;
+
+      // seq wrapper (button + dropdown)
+      const seqWrap=document.createElement('div'); seqWrap.className='seq-toggle-wrap';
+      const seqToggle=document.createElement('button'); seqToggle.className='seq-toggle'; seqToggle.id=`seq-toggle-${e.id}`; seqToggle.title='Sequence'; seqToggle.textContent=`S${s.seq>0?s.seq:''}`;
+      const seqPanel=document.createElement('div'); seqPanel.className='seq-panel'; seqPanel.id=`seq-panel-${e.id}`;
+      let seqBtnsHTML=`<span class="seq-label">seq</span>`;
+      for(let i=0;i<=6;i++) seqBtnsHTML+=`<button class="seq-btn ${s.seq===i?'active':''}" id="seq-${e.id}-${i}" onclick="setSeq(${e.id},${i})">${i}</button>`;
+      seqPanel.innerHTML=seqBtnsHTML;
+      seqWrap.appendChild(seqToggle); seqWrap.appendChild(seqPanel);
+
+      // wep wrapper (button + dropdown)
+      const wepWrap=document.createElement('div'); wepWrap.className='wep-toggle-wrap';
+      const wepToggle=document.createElement('button'); wepToggle.className='wep-toggle'; wepToggle.id=`wep-toggle-${e.id}`; wepToggle.title='Weapon rank'; wepToggle.textContent=`R${s.wep>0?s.wep:''}`;
+      const wepPanel=document.createElement('div'); wepPanel.className='wep-panel'; wepPanel.id=`wep-panel-${e.id}`;
+      let wepBtnsHTML=`<span class="seq-label" style="color:var(--sig)">rank</span>`;
+      for(let i=1;i<=5;i++) wepBtnsHTML+=`<button class="wep-btn ${s.wep===i?'active':''}" id="wep-${e.id}-${i}" onclick="setWep(${e.id},${i})">${i}</button>`;
+      wepPanel.innerHTML=wepBtnsHTML;
+      wepWrap.appendChild(wepToggle); wepWrap.appendChild(wepPanel);
+
+      // priority star
+      const starBtn=document.createElement('button'); starBtn.className=`wish-btn${wled?' prioritized':''}`; starBtn.id=`wish-btn-${e.id}`; starBtn.title='Priority'; starBtn.textContent='★';
+      starBtn.onclick=()=>togglePriority(e.id);
+
+      row.appendChild(cbWrap); row.appendChild(headImg); row.appendChild(resInfo);
+      row.appendChild(seqWrap); row.appendChild(wepWrap); row.appendChild(starBtn);
+      entryWrap.appendChild(row);
+
+      // events
+      seqToggle.addEventListener('click',()=>{
+        if(wepPanel.classList.contains('open')){wepPanel.classList.remove('open');wepToggle.classList.remove('open');}
+        const open=seqPanel.classList.toggle('open'); seqToggle.classList.toggle('open',open);
       });
-      row.querySelector(`#wep-toggle-${e.id}`).addEventListener('click',()=>{
-        const t=document.getElementById(`wep-toggle-${e.id}`),p=document.getElementById(`wep-panel-${e.id}`);
-        const sp=document.getElementById(`seq-panel-${e.id}`),st=document.getElementById(`seq-toggle-${e.id}`);
-        if(sp.classList.contains('open')){sp.classList.remove('open');st.classList.remove('open');}
-        const open=p.classList.toggle('open'); t.classList.toggle('open',open);
+      wepToggle.addEventListener('click',()=>{
+        if(seqPanel.classList.contains('open')){seqPanel.classList.remove('open');seqToggle.classList.remove('open');}
+        const open=wepPanel.classList.toggle('open'); wepToggle.classList.toggle('open',open);
       });
-      row.querySelector(`#res-${e.id}`).addEventListener('change',ev=>{
+      cb.addEventListener('change',ev=>{
         state[e.id].res=ev.target.checked;
-        if(!ev.target.checked){state[e.id].seq=0;refreshSeqBtns(e.id);}
+        if(!ev.target.checked){state[e.id].seq=0;refreshSeqBtns(e.id);state[e.id].wep=0;refreshWepBtns(e.id);}
         if(ev.target.checked&&isPrioritized(e.id)){priority=priority.filter(x=>x!==e.id);renderPriority();}
         const wb=document.getElementById(`wish-btn-${e.id}`); if(wb) wb.classList.toggle('prioritized',isPrioritized(e.id));
         save(); updateStyle(e.id); updateStats();
@@ -1053,10 +1077,11 @@ function openSnapshot() {
       const s = state[e.id] || { res:false, seq:0, wep:0 };
       const cls = s.res ? 'obtained' : 'not-pulled';
       const color = EL_COLORS_MAP[e.element] || 'var(--muted)';
-      const seqPart = s.seq > 0 ? `S${s.seq}` : '';
-      const wepPart = s.wep > 0 ? `R${s.wep}` : '';
+      const seqPart = s.res ? `S${s.seq}` : (s.seq > 0 ? `S${s.seq}` : '');
+      const wepPart = s.res ? `R${s.wep}` : (s.wep > 0 ? `R${s.wep}` : '');
       const comboTag = (seqPart || wepPart) ? `<span class="snap-seq">${seqPart}${wepPart}</span>` : '';
-      html += `<div class="snap-row ${cls}"><div class="snap-el-dot" style="background:${color}"></div><span class="snap-row-name">${e.name}</span>${comboTag}</div>`;
+      const headIcon = `<img class="snap-head-icon" src="icons/head_${e.name.replace(/[^a-zA-Z0-9]/g,'_')}.webp" alt="" onerror="this.style.display='none'">`;
+      html += `<div class="snap-row ${cls}"><div class="snap-el-dot" style="background:${color}"></div>${headIcon}<span class="snap-row-name">${e.name}</span>${comboTag}</div>`;
     });
     html += `</div></div>`;
   });
