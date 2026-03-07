@@ -340,7 +340,7 @@
     .snap-modal { padding:1rem; border-radius:10px; }
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -1256,48 +1256,73 @@ function copySnapshot() {
   btn.textContent = 'generating...';
   btn.disabled = true;
 
-  const clone = card.cloneNode(true);
-  clone.style.cssText = `
-    position: fixed;
-    top: 0; left: -99999px;
-    max-height: none;
-    overflow: visible;
-    width: ${card.scrollWidth}px;
-    border-radius: 12px;
-    background: #1c1c2e;
-    padding: 1.4rem 1.6rem;
-    border: 1px solid #2e2e48;
-  `;
-  document.body.appendChild(clone);
+  // Collect all images in the card and convert to base64 data URLs
+  const imgs = Array.from(card.querySelectorAll('img'));
+  const toDataURL = img => new Promise(resolve => {
+    if (!img.src || img.naturalWidth === 0) { resolve(null); return; }
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      resolve({ el: img, url: canvas.toDataURL('image/png') });
+    } catch(e) { resolve(null); }
+  });
 
-  const w = clone.scrollWidth;
-  const h = clone.scrollHeight;
-  const scale = 2;
+  Promise.all(imgs.map(toDataURL)).then(results => {
+    // Temporarily swap src to data URLs
+    const originals = [];
+    results.forEach(r => {
+      if (!r) return;
+      originals.push({ el: r.el, src: r.el.src });
+      r.el.src = r.url;
+    });
 
-  domtoimage.toPng(clone, {
-    width: w * scale,
-    height: h * scale,
-    style: { transform: `scale(${scale})`, transformOrigin: 'top left' },
-    bgcolor: '#1c1c2e',
-    cacheBust: true
-  }).then(dataUrl => {
-    document.body.removeChild(clone);
-    // Always trigger download (works on mobile too)
-    const a = document.createElement('a');
-    a.download = 'wuwa-snapshot.png';
-    a.href = dataUrl;
-    a.click();
-    // Also try clipboard silently
-    fetch(dataUrl).then(r => r.blob()).then(blob => {
-      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
-    }).catch(() => {});
-    btn.textContent = '✓ saved!';
-    setTimeout(() => { btn.textContent = '⎘ copy + save'; btn.disabled = false; }, 2000);
-  }).catch(err => {
-    document.body.removeChild(clone);
-    console.error(err);
-    btn.textContent = '✕ failed';
-    setTimeout(() => { btn.textContent = '⎘ copy + save'; btn.disabled = false; }, 2000);
+    const clone = card.cloneNode(true);
+    clone.style.cssText = `
+      position: fixed;
+      top: 0; left: -99999px;
+      max-height: none;
+      overflow: visible;
+      width: ${card.scrollWidth}px;
+      border-radius: 12px;
+      background: #1c1c2e;
+      padding: 1.4rem 1.6rem;
+      border: 1px solid #2e2e48;
+    `;
+    document.body.appendChild(clone);
+
+    requestAnimationFrame(() => {
+      html2canvas(clone, {
+        backgroundColor: '#1c1c2e',
+        scale: 2,
+        useCORS: false,
+        allowTaint: true,
+        logging: false,
+        width: clone.scrollWidth,
+        height: clone.scrollHeight,
+        windowWidth: clone.scrollWidth + 9999,
+        windowHeight: clone.scrollHeight + 9999,
+        x: 0, y: 0,
+        scrollX: 0, scrollY: 0
+      }).then(canvas => {
+        document.body.removeChild(clone);
+        // Restore original srcs
+        originals.forEach(o => { o.el.src = o.src; });
+
+        const a = document.createElement('a');
+        a.download = 'wuwa-snapshot.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        btn.textContent = '✓ saved!';
+        setTimeout(() => { btn.textContent = '⎘ copy + save'; btn.disabled = false; }, 2000);
+      }).catch(() => {
+        document.body.removeChild(clone);
+        originals.forEach(o => { o.el.src = o.src; });
+        btn.textContent = '✕ failed';
+        setTimeout(() => { btn.textContent = '⎘ copy + save'; btn.disabled = false; }, 2000);
+      });
+    });
   });
 }
 </script>
