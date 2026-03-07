@@ -1255,18 +1255,43 @@ function copySnapshot() {
   const card = document.getElementById('snap-card-content');
   btn.textContent = 'generating...';
   btn.disabled = true;
-  html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
-    canvas.toBlob(blob => {
-      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
-        btn.textContent = '✓ copied!';
-        setTimeout(() => { btn.textContent = '⎘ copy image'; btn.disabled = false; }, 2000);
-      }).catch(() => {
-        btn.textContent = '✕ failed';
-        setTimeout(() => { btn.textContent = '⎘ copy image'; btn.disabled = false; }, 2000);
-      });
-    }, 'image/png');
-  }).catch(() => {
-    btn.textContent = '⎘ copy image'; btn.disabled = false;
+
+  // Temporarily remove scroll constraint so html2canvas sees full height
+  const prevMaxHeight = card.style.maxHeight;
+  const prevOverflow  = card.style.overflow;
+  card.style.maxHeight = 'none';
+  card.style.overflow  = 'visible';
+
+  // Let the DOM reflow before capturing
+  requestAnimationFrame(() => {
+    html2canvas(card, {
+      backgroundColor: null, scale: 2, useCORS: true, logging: false,
+      width: card.scrollWidth, height: card.scrollHeight,
+      windowWidth: card.scrollWidth, windowHeight: card.scrollHeight
+    }).then(canvas => {
+      // Restore scroll
+      card.style.maxHeight = prevMaxHeight;
+      card.style.overflow  = prevOverflow;
+      canvas.toBlob(blob => {
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
+          btn.textContent = '✓ copied!';
+          setTimeout(() => { btn.textContent = '⎘ copy + save'; btn.disabled = false; }, 2000);
+        }).catch(() => {
+          // Fallback — trigger download instead
+          const a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = 'wuwa-snapshot.png';
+          a.click();
+          btn.textContent = '✓ saved!';
+          setTimeout(() => { btn.textContent = '⎘ copy + save'; btn.disabled = false; }, 2000);
+        });
+      }, 'image/png');
+    }).catch(() => {
+      card.style.maxHeight = prevMaxHeight;
+      card.style.overflow  = prevOverflow;
+      btn.textContent = '⎘ copy + save';
+      btn.disabled = false;
+    });
   });
 }
 </script>
