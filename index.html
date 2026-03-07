@@ -164,7 +164,8 @@
   .version-heading.collapsed .chevron { transform:rotate(-90deg); }
   .version-count { font-size:0.65rem; color:var(--subtext); font-family:'JetBrains Mono',monospace; }
   .version-body { overflow:hidden; transition:max-height 0.25s ease; }
-  .version-body.collapsed { max-height:0 !important; }
+  .version-body.expanded { overflow:visible; }
+  .version-body.collapsed { max-height:0 !important; overflow:hidden; }
 
   /* Entries */
   .entry-wrap.el-hidden { display:none; }
@@ -258,29 +259,37 @@
   .modal-msg.err { color:var(--havoc); }
 
   /* Snapshot modal */
-  .snap-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:100; align-items:flex-start; justify-content:flex-start; padding:1.5rem; overflow:auto; }
+  .snap-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:100; align-items:center; justify-content:center; padding:1.5rem; overflow:auto; }
   .snap-modal-backdrop.open { display:flex; }
-  .snap-modal { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:1.4rem 1.6rem; width:820px; min-width:600px; flex-shrink:0; }
-  .snap-modal-actions { display:flex; justify-content:flex-end; margin-bottom:1rem; }
-  .snap-header { display:flex; justify-content:flex-end; align-items:center; margin-bottom:0.9rem; padding-bottom:0.7rem; border-bottom:1px solid var(--border); }
+  .snap-modal { padding:0; background:transparent; border:none; border-radius:0; width:820px; min-width:600px; flex-shrink:0; }
+  .snap-modal-actions { display:flex; justify-content:flex-end; margin-bottom:0.6rem; gap:0.5rem; }
+  /* the actual card that gets captured */
+  #snap-card-content {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    border: 1px solid var(--border);
+  }
+  .snap-header { display:flex; justify-content:flex-end; align-items:center; margin-bottom:0.9rem; padding-bottom:0.7rem; border-bottom:1px solid rgba(255,255,255,0.07); }
   .snap-stats { display:flex; gap:1.2rem; }
   .snap-stat { text-align:right; }
   .snap-stat-num { font-family:'JetBrains Mono',monospace; font-size:0.85rem; font-weight:600; display:block; }
   .snap-stat-num.res { color:var(--got); }
   .snap-stat-num.sig { color:var(--sig); }
   .snap-stat-label { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
-  .snap-ver-grid { display:grid; grid-template-columns:1fr 1.4fr 0.85fr; gap:0; align-items:stretch; }
-  .snap-ver-col { padding:0 0.7rem; border-right:1px solid var(--border); display:flex; flex-direction:column; }
+  .snap-ver-grid { display:grid; grid-template-columns:repeat(3,auto); gap:0; align-items:stretch; width:100%; }
+  .snap-ver-col { padding:0 0.7rem; border-right:1px solid rgba(255,255,255,0.07); display:flex; flex-direction:column; min-width:0; }
   .snap-ver-col:first-child { padding-left:0; }
   .snap-ver-col:last-child  { border-right:none; padding-right:0; }
   .snap-ver-label { font-family:'JetBrains Mono',monospace; font-size:0.56rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.15em; margin-bottom:0.45rem; white-space:nowrap; }
+  .snap-ver-count { color:var(--subtext); letter-spacing:0; font-size:0.56rem; }
   .snap-row-list { display:flex; flex-direction:column; gap:0.15rem; }
   .snap-row { display:flex; align-items:center; gap:0.35rem; padding:0.26rem 0.4rem; border-radius:5px; border-left:2px solid transparent; }
   .snap-row.obtained { border-left-color:var(--got); background:rgba(166,227,161,0.04); }
   .snap-row.not-pulled { opacity:0.38; }
   .snap-row-name { font-size:0.74rem; font-weight:500; flex:1; color:var(--text); white-space:nowrap; }
   .snap-row.obtained .snap-row-name { color:var(--got); }
-  .snap-el-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .snap-el-icon { width:13px; height:13px; object-fit:contain; flex-shrink:0; opacity:0.85; }
   .snap-head-icon { width:18px; height:18px; border-radius:50%; object-fit:cover; flex-shrink:0; }
   .snap-sig { font-family:'JetBrains Mono',monospace; font-size:0.5rem; color:var(--sig); border:1px solid rgba(137,180,250,0.3); padding:0.02rem 0.22rem; border-radius:3px; background:rgba(137,180,250,0.08); flex-shrink:0; white-space:nowrap; }
   .snap-seq { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--accent); border:1px solid rgba(203,166,247,0.3); padding:0.05rem 0.28rem; border-radius:3px; background:rgba(203,166,247,0.08); flex-shrink:0; white-space:nowrap; }
@@ -367,10 +376,10 @@
 </div>
 
 <!-- Snapshot modal -->
-<div class="snap-modal-backdrop" id="modal-snapshot">
-  <div class="snap-modal">
+<div class="snap-modal-backdrop" id="modal-snapshot" onclick="closeSnapshot()">
+  <div class="snap-modal" onclick="event.stopPropagation()">
     <div class="snap-modal-actions">
-      <button class="modal-btn confirm-primary" id="snap-download-btn" onclick="downloadSnapshot()">↓ save as image</button>
+      <button class="modal-btn confirm-primary" id="snap-copy-btn" onclick="copySnapshot()">⎘ copy image</button>
       <button class="modal-btn" onclick="closeSnapshot()">close</button>
     </div>
     <div id="snap-card-content"></div>
@@ -820,7 +829,9 @@ function toggleAllVersions() {
       heading.classList.remove('collapsed');
       body.classList.remove('collapsed');
       body.style.maxHeight = 'none';
+      setTimeout(()=>body.classList.add('expanded'), 260);
     } else {
+      body.classList.remove('expanded');
       body.style.maxHeight = body.scrollHeight + 'px';
       requestAnimationFrame(() => {
         body.classList.add('collapsed');
@@ -870,8 +881,15 @@ function render() {
     versionElements.push({ heading, body });
     heading.addEventListener('click',()=>{
       const col=heading.classList.toggle('collapsed');
-      if(col){body.style.maxHeight=body.scrollHeight+'px';requestAnimationFrame(()=>body.classList.add('collapsed'));}
-      else{body.classList.remove('collapsed');body.style.maxHeight=body.scrollHeight+'px';setTimeout(()=>body.style.maxHeight='none',260);}
+      if(col){
+        body.classList.remove('expanded');
+        body.style.maxHeight=body.scrollHeight+'px';
+        requestAnimationFrame(()=>body.classList.add('collapsed'));
+      } else {
+        body.classList.remove('collapsed');
+        body.style.maxHeight=body.scrollHeight+'px';
+        setTimeout(()=>{body.style.maxHeight='none';body.classList.add('expanded');},260);
+      }
       updateCollapseBtn();
     });
     entries.forEach(e=>{
@@ -944,7 +962,7 @@ function render() {
       body.appendChild(entryWrap);
     });
     group.appendChild(heading); group.appendChild(body); container.appendChild(group);
-    requestAnimationFrame(()=>{ body.style.maxHeight='none'; });
+    requestAnimationFrame(()=>{ body.style.maxHeight='none'; body.classList.add('expanded'); });
   });
   updateStats();
 }
@@ -1057,7 +1075,6 @@ renderUpcoming();
 
 /* ─────────────── SNAPSHOT ─────────────── */
 function openSnapshot() {
-  const EL_COLORS_MAP = { Spectro:'#f9e2af', Aero:'#94e2d5', Glacio:'#89dceb', Fusion:'#fab387', Electro:'#cba6f7', Havoc:'#f38ba8' };
   const total = allEntries.length;
   const got   = allEntries.filter(e => state[e.id]?.res).length;
   const sig   = allEntries.filter(e => state[e.id]?.wep > 0).length;
@@ -1072,16 +1089,16 @@ function openSnapshot() {
     <div class="snap-ver-grid">`;
 
   versions.forEach(({ label, entries }) => {
-    html += `<div class="snap-ver-col"><div class="snap-ver-label">${label}</div><div class="snap-row-list">`;
+    const verGot = entries.filter(e => state[e.id]?.res).length;
+    html += `<div class="snap-ver-col"><div class="snap-ver-label">${label} <span class="snap-ver-count">${verGot}/${entries.length}</span></div><div class="snap-row-list">`;
     entries.forEach(e => {
       const s = state[e.id] || { res:false, seq:0, wep:0 };
       const cls = s.res ? 'obtained' : 'not-pulled';
-      const color = EL_COLORS_MAP[e.element] || 'var(--muted)';
       const seqPart = s.res ? `S${s.seq}` : (s.seq > 0 ? `S${s.seq}` : '');
       const wepPart = s.res ? `R${s.wep}` : (s.wep > 0 ? `R${s.wep}` : '');
       const comboTag = (seqPart || wepPart) ? `<span class="snap-seq">${seqPart}${wepPart}</span>` : '';
       const headIcon = `<img class="snap-head-icon" src="icons/head_${e.name.replace(/[^a-zA-Z0-9]/g,'_')}.webp" alt="" onerror="this.style.display='none'">`;
-      html += `<div class="snap-row ${cls}"><div class="snap-el-dot" style="background:${color}"></div>${headIcon}<span class="snap-row-name">${e.name}</span>${comboTag}</div>`;
+      html += `<div class="snap-row ${cls}">${headIcon}<span class="snap-row-name">${e.name}</span>${comboTag}</div>`;
     });
     html += `</div></div>`;
   });
@@ -1095,26 +1112,37 @@ function closeSnapshot() {
   document.getElementById('modal-snapshot').classList.remove('open');
 }
 
-function downloadSnapshot() {
-  const btn = document.getElementById('snap-download-btn');
+function copySnapshot() {
+  const btn = document.getElementById('snap-copy-btn');
   const card = document.getElementById('snap-card-content');
   btn.textContent = 'generating...';
   btn.disabled = true;
   html2canvas(card, {
-    backgroundColor: '#1e1e2e',
+    backgroundColor: null,
     scale: 2,
     useCORS: true,
     logging: false,
   }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = 'resonance-index.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    btn.textContent = '↓ save as image';
-    btn.disabled = false;
+    canvas.toBlob(blob => {
+      try {
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
+          btn.textContent = '✓ copied!';
+          setTimeout(() => { btn.textContent = '⎘ copy image'; btn.disabled = false; }, 2000);
+        }).catch(() => {
+          // fallback: download instead
+          const link = document.createElement('a');
+          link.download = 'resonance-index.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          btn.textContent = '↓ saved (clipboard unavailable)';
+          setTimeout(() => { btn.textContent = '⎘ copy image'; btn.disabled = false; }, 2500);
+        });
+      } catch {
+        btn.textContent = '⎘ copy image'; btn.disabled = false;
+      }
+    }, 'image/png');
   }).catch(() => {
-    btn.textContent = '↓ save as image';
-    btn.disabled = false;
+    btn.textContent = '⎘ copy image'; btn.disabled = false;
   });
 }
 </script>
