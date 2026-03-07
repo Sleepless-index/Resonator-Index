@@ -15,7 +15,7 @@ A personal tracker for Wuthering Waves limited 5-star resonators — covering ve
 ## Usage
 
 Open `index.html` in any modern browser, or visit the hosted GitHub Pages site. No installation or build step required.
-
+https://sleepless-index.github.io/Resonator-Index/
 ---
 
 *Not affiliated with Kuro Games. Wuthering Waves and all related assets are property of Kuro Games.*
