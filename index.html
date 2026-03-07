@@ -264,16 +264,21 @@
   .modal-msg.err { color:var(--havoc); }
 
   /* Snapshot modal */
-  .snap-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:100; align-items:center; justify-content:center; padding:1.5rem; overflow:auto; }
+  .snap-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:100; align-items:flex-start; justify-content:center; padding:1.5rem; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
   .snap-modal-backdrop.open { display:flex; }
-  .snap-modal { padding:0; background:transparent; border:none; border-radius:0; width:820px; min-width:600px; flex-shrink:0; }
-  .snap-modal-actions { display:flex; justify-content:flex-end; margin-bottom:0.6rem; gap:0.5rem; }
+  .snap-modal { padding:0; background:transparent; border:none; border-radius:0; width:820px; min-width:0; max-width:100%; flex-shrink:0; display:flex; flex-direction:column; }
+  .snap-modal-actions { display:flex; justify-content:flex-end; align-items:center; margin-bottom:0.6rem; gap:0.5rem; }
+  .snap-view-toggle { display:flex; background:var(--surface2); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-right:auto; }
+  .snap-view-btn { font-family:'JetBrains Mono',monospace; font-size:0.62rem; letter-spacing:0.06em; padding:0.3rem 0.8rem; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+  .snap-view-btn.active { background:var(--surface); color:var(--text); }
   /* the actual card that gets captured */
   #snap-card-content {
     background: var(--surface);
     border-radius: 12px;
     padding: 1.4rem 1.6rem;
     border: 1px solid var(--border);
+    overflow-y: auto;
+    max-height: calc(90vh - 3rem);
   }
   .snap-header { display:flex; justify-content:flex-end; align-items:center; margin-bottom:0.9rem; padding-bottom:0.7rem; border-bottom:1px solid rgba(255,255,255,0.07); }
   .snap-stats { display:flex; gap:1.2rem; }
@@ -282,22 +287,55 @@
   .snap-stat-num.res { color:var(--got); }
   .snap-stat-num.sig { color:var(--sig); }
   .snap-stat-label { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
-  .snap-ver-grid { display:grid; grid-template-columns:repeat(var(--snap-cols,3),auto); gap:0; align-items:stretch; width:100%; }
-  .snap-ver-col { padding:0 0.7rem; border-right:1px solid rgba(255,255,255,0.07); display:flex; flex-direction:column; min-width:0; }
-  .snap-ver-col:first-child { padding-left:0; }
-  .snap-ver-col:last-child  { border-right:none; padding-right:0; }
-  .snap-ver-label { font-family:'JetBrains Mono',monospace; font-size:0.56rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.15em; margin-bottom:0.45rem; white-space:nowrap; }
+  .snap-ver-grid { display:flex; flex-direction:column; gap:1.2rem; width:100%; }
+  .snap-ver-col { display:flex; flex-direction:column; gap:0.5rem; min-width:0; }
+  .snap-ver-label { font-family:'JetBrains Mono',monospace; font-size:0.56rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.15em; white-space:nowrap; }
   .snap-ver-count { color:var(--subtext); letter-spacing:0; font-size:0.56rem; }
-  .snap-row-list { display:flex; flex-direction:column; gap:0.15rem; }
-  .snap-row { display:flex; align-items:center; gap:0.35rem; padding:0.26rem 0.4rem; border-radius:5px; border-left:2px solid transparent; }
-  .snap-row.obtained { border-left-color:var(--got); background:rgba(166,227,161,0.04); }
-  .snap-row.not-pulled { opacity:0.38; }
-  .snap-row-name { font-size:0.74rem; font-weight:500; flex:1; color:var(--text); white-space:nowrap; }
-  .snap-row.obtained .snap-row-name { color:var(--got); }
-  .snap-el-icon { width:13px; height:13px; object-fit:contain; flex-shrink:0; opacity:0.85; }
-  .snap-head-icon { width:18px; height:18px; border-radius:50%; object-fit:cover; flex-shrink:0; }
-  .snap-sig { font-family:'JetBrains Mono',monospace; font-size:0.5rem; color:var(--sig); border:1px solid rgba(137,180,250,0.3); padding:0.02rem 0.22rem; border-radius:3px; background:rgba(137,180,250,0.08); flex-shrink:0; white-space:nowrap; }
-  .snap-seq { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--accent); border:1px solid rgba(203,166,247,0.3); padding:0.05rem 0.28rem; border-radius:3px; background:rgba(203,166,247,0.08); flex-shrink:0; white-space:nowrap; }
+  .snap-row-list { display:grid; grid-template-columns:repeat(6, 110px); gap:0.4rem; }
+
+  /* portrait card */
+  .snap-card {
+    width:110px; height:160px;
+    border-radius:10px; overflow:hidden;
+    position:relative; flex-shrink:0;
+    border:1px solid var(--border);
+    background:var(--surface2);
+  }
+  .snap-card.obtained { border-color:rgba(137,217,158,0.3); }
+  .snap-card.not-pulled { opacity:0.35; filter:grayscale(40%); }
+  .snap-card img.snap-art {
+    width:100%; height:100%;
+    object-fit:cover; object-position:top center;
+    display:block;
+  }
+  .snap-card::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(10,10,20,0.92) 0%, rgba(10,10,20,0.25) 45%, transparent 70%);
+    pointer-events:none;
+  }
+  .snap-card-name {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:0.4rem 0.45rem 0.45rem;
+    font-size:0.65rem; font-weight:600;
+    color:var(--subtext); text-align:center; z-index:2;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .snap-card.obtained .snap-card-name { color:var(--got); }
+  .snap-card-tag {
+    position:absolute; top:6px; left:6px; z-index:3;
+    font-family:'JetBrains Mono',monospace; font-size:0.5rem;
+    background:rgba(15,15,30,0.7); border:1px solid rgba(255,255,255,0.12);
+    border-radius:3px; padding:0.05rem 0.3rem; white-space:nowrap;
+    display:flex; gap:0;
+  }
+  .snap-card-tag .s-part { color:var(--accent); }
+  .snap-card-tag .r-part { color:var(--sig); }
+  .snap-card-dot {
+    position:absolute; top:7px; right:7px;
+    width:8px; height:8px; border-radius:50%;
+    background:var(--got); box-shadow:0 0 5px rgba(137,217,158,0.7);
+    z-index:3;
+  }
   @media (max-width:600px) {
     .snap-modal { padding:1rem; border-radius:10px; }
   }
@@ -387,6 +425,10 @@
 <div class="snap-modal-backdrop" id="modal-snapshot" onclick="closeSnapshot()">
   <div class="snap-modal" onclick="event.stopPropagation()">
     <div class="snap-modal-actions">
+      <div class="snap-view-toggle">
+        <button class="snap-view-btn active" id="snap-view-regions" onclick="setSnapView('regions')">list</button>
+        <button class="snap-view-btn" id="snap-view-gallery" onclick="setSnapView('gallery')">gallery</button>
+      </div>
       <button class="modal-btn confirm-primary" id="snap-copy-btn" onclick="copySnapshot()">⎘ copy + save</button>
       <button class="modal-btn" onclick="closeSnapshot()">close</button>
     </div>
@@ -1092,7 +1134,37 @@ renderPriority();
 renderUpcoming();
 
 /* ─────────────── SNAPSHOT ─────────────── */
+let snapView = 'regions';
+
+function setSnapView(v) {
+  snapView = v;
+  document.getElementById('snap-view-regions').classList.toggle('active', v === 'regions');
+  document.getElementById('snap-view-gallery').classList.toggle('active', v === 'gallery');
+  renderSnapContent();
+}
+
 function openSnapshot() {
+  document.getElementById('modal-snapshot').classList.add('open');
+  renderSnapContent();
+}
+
+function renderSnapContent() {
+  snapView === 'gallery' ? renderSnapGallery() : renderSnapRegions();
+}
+
+function makeSnapCard(e) {
+  const s = state[e.id] || { res:false, seq:0, wep:0 };
+  const cls = s.res ? 'obtained' : 'not-pulled';
+  const seqPart = s.seq > 0 ? `S${s.seq}` : (s.res ? 'S0' : '');
+  const wepPart = s.wep > 0 ? `R${s.wep}` : (s.res ? 'R0' : '');
+  const tag = (seqPart || wepPart) ? `<div class="snap-card-tag">${seqPart}${wepPart}</div>` : '';
+  const dot = s.res ? `<div class="snap-card-dot"></div>` : '';
+  const safeName = e.name.replace(/[^a-zA-Z0-9]/g,'_');
+  const art = `<img class="snap-art" src="art/art_${safeName}.avif" alt="" onerror="this.src='icons/head_${safeName}.webp';">`;
+  return `<div class="snap-card ${cls}">${art}${dot}${tag}<div class="snap-card-name">${e.name}</div></div>`;
+}
+
+function renderSnapList() {
   const total = allEntries.length;
   const got   = allEntries.filter(e => state[e.id]?.res).length;
   const sig   = allEntries.filter(e => state[e.id]?.wep > 0).length;
@@ -1104,26 +1176,74 @@ function openSnapshot() {
         <div class="snap-stat"><span class="snap-stat-num sig">${sig}/${total}</span><span class="snap-stat-label">sig weapons</span></div>
       </div>
     </div>
-    <div class="snap-ver-grid" style="--snap-cols:${versions.length}">`;
+    <div class="snap-ver-grid">`;
 
   versions.forEach(({ label, entries }) => {
     const verGot = entries.filter(e => state[e.id]?.res).length;
     html += `<div class="snap-ver-col"><div class="snap-ver-label">${label} <span class="snap-ver-count">${verGot}/${entries.length}</span></div><div class="snap-row-list">`;
-    entries.forEach(e => {
-      const s = state[e.id] || { res:false, seq:0, wep:0 };
-      const cls = s.res ? 'obtained' : 'not-pulled';
-      const seqPart = s.res ? `S${s.seq}` : (s.seq > 0 ? `S${s.seq}` : '');
-      const wepPart = s.res ? `R${s.wep}` : (s.wep > 0 ? `R${s.wep}` : '');
-      const comboTag = (seqPart || wepPart) ? `<span class="snap-seq">${seqPart}${wepPart}</span>` : '';
-      const headIcon = `<img class="snap-head-icon" src="icons/head_${e.name.replace(/[^a-zA-Z0-9]/g,'_')}.webp" alt="" onerror="this.style.display='none'">`;
-      html += `<div class="snap-row ${cls}">${headIcon}<span class="snap-row-name">${e.name}</span>${comboTag}</div>`;
-    });
+    html += entries.map(makeSnapCard).join('');
     html += `</div></div>`;
   });
 
   html += `</div>`;
   document.getElementById('snap-card-content').innerHTML = html;
-  document.getElementById('modal-snapshot').classList.add('open');
+}
+
+function renderSnapRegions() {
+  const total = allEntries.length;
+  const got   = allEntries.filter(e => state[e.id]?.res).length;
+  const sig   = allEntries.filter(e => state[e.id]?.wep > 0).length;
+
+  let html = `
+    <div class="snap-header">
+      <div class="snap-stats">
+        <div class="snap-stat"><span class="snap-stat-num res">${got}/${total}</span><span class="snap-stat-label">resonators</span></div>
+        <div class="snap-stat"><span class="snap-stat-num sig">${sig}/${total}</span><span class="snap-stat-label">sig weapons</span></div>
+      </div>
+    </div>
+    <div class="snap-ver-grid">`;
+
+  versions.forEach(({ label, entries }) => {
+    const verGot = entries.filter(e => state[e.id]?.res).length;
+    html += `<div class="snap-ver-col">
+      <div class="snap-ver-label">${label} <span class="snap-ver-count">${verGot}/${entries.length}</span></div>
+      <div class="snap-row-list">${entries.map(makeSnapCard).join('')}</div>
+    </div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('snap-card-content').innerHTML = html;
+}
+
+function renderSnapGallery() {
+  const owned    = allEntries.filter(e => state[e.id]?.res);
+  const notOwned = allEntries.filter(e => !state[e.id]?.res);
+  const total    = allEntries.length;
+  const sig      = allEntries.filter(e => state[e.id]?.wep > 0).length;
+
+  let html = `
+    <div class="snap-header">
+      <div class="snap-stats">
+        <div class="snap-stat"><span class="snap-stat-num res">${owned.length}/${total}</span><span class="snap-stat-label">resonators</span></div>
+        <div class="snap-stat"><span class="snap-stat-num sig">${sig}/${total}</span><span class="snap-stat-label">sig weapons</span></div>
+      </div>
+    </div>
+    <div class="snap-ver-grid">`;
+
+  html += `<div class="snap-ver-col">
+    <div class="snap-ver-label">owned <span class="snap-ver-count">${owned.length}</span></div>
+    <div class="snap-row-list">${owned.map(makeSnapCard).join('')}</div>
+  </div>`;
+
+  if (notOwned.length) {
+    html += `<div class="snap-ver-col">
+      <div class="snap-ver-label">not owned <span class="snap-ver-count">${notOwned.length}</span></div>
+      <div class="snap-row-list">${notOwned.map(makeSnapCard).join('')}</div>
+    </div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById('snap-card-content').innerHTML = html;
 }
 
 function closeSnapshot() {
