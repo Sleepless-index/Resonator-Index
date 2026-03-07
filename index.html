@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Index</title>
+<title>Limited Resonator Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -36,7 +36,7 @@
   .stat-card.got  { border-left-color:var(--got); }
   .stat-card.skip { border-left-color:var(--muted); }
   .stat-card.sig  { border-left-color:var(--sig); }
-  .stat-card.wish { border-left-color:var(--wish); }
+  .stat-card.priority { border-left-color:var(--wish); }
   .stat-num {
     font-size:1.6rem; font-weight:600; line-height:1;
     font-family:'JetBrains Mono',monospace;
@@ -44,7 +44,7 @@
   .stat-card.got  .stat-num { color:var(--got); }
   .stat-card.skip .stat-num { color:var(--subtext); }
   .stat-card.sig  .stat-num { color:var(--sig); }
-  .stat-card.wish .stat-num { color:var(--wish); }
+  .stat-card.priority .stat-num { color:var(--wish); }
   .stat-label {
     font-size:0.68rem; color:var(--muted);
     font-family:'JetBrains Mono',monospace;
@@ -91,21 +91,21 @@
   .section-body { overflow:hidden; transition:max-height 0.25s ease; }
   .section-body.collapsed { max-height:0 !important; }
 
-  /* Wishlist */
-  .wishlist-section { margin-bottom:2rem; }
-  .wishlist-section .section-heading { color:var(--wish); }
-  .wishlist-empty { font-size:0.75rem; color:var(--muted); font-family:'JetBrains Mono',monospace; padding:0.6rem 0.2rem; font-style:italic; }
-  .wl-item { display:flex; align-items:center; gap:0.6rem; padding:0.4rem 0.6rem; border-radius:6px; margin-bottom:0.2rem; background:var(--surface); border:1px solid var(--border); cursor:grab; user-select:none; transition:opacity 0.15s,border-color 0.15s; }
-  .wl-item:active { cursor:grabbing; }
-  .wl-item.drag-over { border-color:var(--wish); }
-  .wl-item.dragging  { opacity:0.35; }
-  .wl-rank { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--wish); min-width:1.2rem; }
-  .wl-name { font-size:0.85rem; font-weight:500; color:var(--text); flex:1; }
-  .wl-el   { font-size:0.63rem; font-family:'JetBrains Mono',monospace; padding:0.07rem 0.38rem; border-radius:20px; border:1px solid; opacity:0.8; }
-  .wl-upcoming-tag { font-size:0.6rem; font-family:'JetBrains Mono',monospace; color:var(--upcoming); border:1px solid var(--upcoming); padding:0.05rem 0.3rem; border-radius:3px; opacity:0.7; }
-  .wl-remove { background:transparent; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 0.2rem; line-height:1; transition:color 0.12s; }
-  .wl-remove:hover { color:var(--havoc); }
-  .wl-drag-handle { color:var(--muted); font-size:0.7rem; cursor:grab; }
+  /* Priority */
+  .priority-section { margin-bottom:2rem; }
+  .priority-section .section-heading { color:var(--wish); }
+  .priority-empty { font-size:0.75rem; color:var(--muted); font-family:'JetBrains Mono',monospace; padding:0.6rem 0.2rem; font-style:italic; }
+  .pr-item { display:flex; align-items:center; gap:0.6rem; padding:0.4rem 0.6rem; border-radius:6px; margin-bottom:0.2rem; background:var(--surface); border:1px solid var(--border); cursor:grab; user-select:none; transition:opacity 0.15s,border-color 0.15s; }
+  .pr-item:active { cursor:grabbing; }
+  .pr-item.drag-over { border-color:var(--wish); }
+  .pr-item.dragging  { opacity:0.35; }
+  .pr-rank { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--wish); min-width:1.2rem; }
+  .pr-name { font-size:0.85rem; font-weight:500; color:var(--text); flex:1; }
+  .pr-el   { font-size:0.63rem; font-family:'JetBrains Mono',monospace; padding:0.07rem 0.38rem; border-radius:20px; border:1px solid; opacity:0.8; }
+  .pr-upcoming-tag { font-size:0.6rem; font-family:'JetBrains Mono',monospace; color:var(--upcoming); border:1px solid var(--upcoming); padding:0.05rem 0.3rem; border-radius:3px; opacity:0.7; }
+  .pr-remove { background:transparent; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 0.2rem; line-height:1; transition:color 0.12s; }
+  .pr-remove:hover { color:var(--havoc); }
+  .pr-drag-handle { color:var(--muted); font-size:0.7rem; cursor:grab; }
 
   /* Upcoming section */
   .upcoming-section { margin-bottom:2rem; }
@@ -148,8 +148,8 @@
     background:transparent; color:var(--muted); font-size:0.7rem;
     cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; padding:0;
   }
-  .up-btn.wish-btn:hover, .up-btn.wish-btn.wishlisted { border-color:var(--wish); color:var(--wish); }
-  .up-btn.wish-btn.wishlisted { background:rgba(249,226,175,0.1); }
+  .up-btn.wish-btn:hover, .up-btn.wish-btn.prioritized { border-color:var(--wish); color:var(--wish); }
+  .up-btn.wish-btn.prioritized { background:rgba(249,226,175,0.1); }
   .up-btn.edit-btn:hover  { border-color:var(--accent); color:var(--accent); }
   .up-btn.rel-btn:hover   { border-color:var(--got);    color:var(--got); }
   .up-btn.del-btn:hover   { border-color:var(--havoc);  color:var(--havoc); }
@@ -162,7 +162,7 @@
   .version-heading:hover { color:var(--subtext); }
   .version-heading .chevron { margin-left:auto; font-size:0.6rem; transition:transform 0.2s; }
   .version-heading.collapsed .chevron { transform:rotate(-90deg); }
-  .version-count { font-size:0.6rem; color:var(--muted); font-family:'JetBrains Mono',monospace; opacity:0.7; }
+  .version-count { font-size:0.65rem; color:var(--subtext); font-family:'JetBrains Mono',monospace; }
   .version-body { overflow:hidden; transition:max-height 0.25s ease; }
   .version-body.collapsed { max-height:0 !important; }
 
@@ -192,8 +192,8 @@
   .el-havoc   { color:var(--havoc);   border-color:var(--havoc); }
   .wish-btn { width:22px; height:22px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.72rem; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; }
   .wish-btn:hover { border-color:var(--wish); color:var(--wish); }
-  .wish-btn.wishlisted { border-color:var(--wish); color:var(--wish); background:rgba(249,226,175,0.1); }
-  .entry.is-got .wish-btn { opacity:0.2; pointer-events:none; }
+  .wish-btn.prioritized { border-color:var(--wish); color:var(--wish); background:rgba(249,226,175,0.1); }
+  .res-head-icon { width:28px; height:28px; border-radius:50%; object-fit:cover; flex-shrink:0; background:var(--surface2); }
   .seq-toggle { width:22px; height:22px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; font-weight:500; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; }
   .seq-toggle:hover { border-color:var(--accent); color:var(--accent); }
   .seq-toggle.open  { border-color:var(--accent); color:var(--accent); background:rgba(203,166,247,0.08); }
@@ -204,6 +204,15 @@
   .seq-btn { width:22px; height:22px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; padding:0; }
   .seq-btn:hover { border-color:var(--accent); color:var(--accent); }
   .seq-btn.active { background:var(--accent); border-color:var(--accent); color:#1e1e2e; font-weight:600; }
+  .wep-toggle { width:22px; height:22px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; font-weight:500; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; }
+  .wep-toggle:hover { border-color:var(--sig); color:var(--sig); }
+  .wep-toggle.open  { border-color:var(--sig); color:var(--sig); background:rgba(137,180,250,0.08); }
+  .entry.is-skip .wep-toggle { opacity:0.3; pointer-events:none; }
+  .wep-panel { display:none; align-items:center; gap:0.25rem; padding:0.35rem 0.6rem 0.35rem 2.8rem; }
+  .wep-panel.open { display:flex; }
+  .wep-btn { width:22px; height:22px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.62rem; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; padding:0; }
+  .wep-btn:hover { border-color:var(--sig); color:var(--sig); }
+  .wep-btn.active { background:var(--sig); border-color:var(--sig); color:#1e1e2e; font-weight:600; }
 
   /* Bottom bar */
   .bottom-bar { display:flex; justify-content:center; gap:0.6rem; margin-top:2.5rem; flex-wrap:wrap; }
@@ -269,7 +278,7 @@
   .snap-row.obtained .snap-row-name { color:var(--got); }
   .snap-el-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
   .snap-sig { font-family:'JetBrains Mono',monospace; font-size:0.5rem; color:var(--sig); border:1px solid rgba(137,180,250,0.3); padding:0.02rem 0.22rem; border-radius:3px; background:rgba(137,180,250,0.08); flex-shrink:0; white-space:nowrap; }
-  .snap-seq { font-family:'JetBrains Mono',monospace; font-size:0.5rem; color:var(--accent); border:1px solid rgba(203,166,247,0.3); padding:0.02rem 0.22rem; border-radius:3px; background:rgba(203,166,247,0.08); flex-shrink:0; white-space:nowrap; }
+  .snap-seq { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--accent); border:1px solid rgba(203,166,247,0.3); padding:0.05rem 0.28rem; border-radius:3px; background:rgba(203,166,247,0.08); flex-shrink:0; white-space:nowrap; }
   @media (max-width:600px) {
     .snap-modal { padding:1rem; border-radius:10px; }
   }
@@ -285,15 +294,15 @@
   </div>
   <div class="stat-card sig">
     <span class="stat-num" id="s-sig">0</span>
-    <span class="stat-label">signatures</span>
+    <span class="stat-label">sig weapons</span>
   </div>
   <div class="stat-card skip">
     <span class="stat-num" id="s-skip">0</span>
     <span class="stat-label">not pulled</span>
   </div>
-  <div class="stat-card wish">
-    <span class="stat-num" id="s-wish">0</span>
-    <span class="stat-label">Priority</span>
+  <div class="stat-card priority">
+    <span class="stat-num" id="s-priority">0</span>
+    <span class="stat-label">priority</span>
   </div>
 </div>
 
@@ -307,17 +316,17 @@
   </div>
   <div class="progress-card">
     <div class="progress-card-header">
-      <span class="progress-label">signatures</span>
+      <span class="progress-label">sig weapons</span>
       <span class="progress-pct sig" id="pct-sig">0%</span>
     </div>
     <div class="progress-track"><div class="progress-fill sig" id="bar-sig" style="width:0%"></div></div>
   </div>
 </div>
 
-<!-- Wishlist -->
-<div class="wishlist-section">
-  <div class="section-heading" id="wl-heading"><span>★ Pull Priority</span><span class="sec-chevron">▼</span></div>
-  <div class="section-body" id="wl-body"><div id="wl-list"></div></div>
+<!-- Priority -->
+<div class="priority-section">
+  <div class="section-heading" id="pr-heading"><span>★ Pull Priority</span><span class="sec-chevron">▼</span></div>
+  <div class="section-body" id="pr-body"><div id="pr-list"></div></div>
 </div>
 
 <div class="el-breakdown" id="el-breakdown"></div>
@@ -467,7 +476,6 @@ const HARDCODED = [
     { id:25, ver:"3.0", name:"Mornye",       element:"Fusion"  },
     { id:26, ver:"3.1", name:"Aemeath",      element:"Fusion"  },
     { id:27, ver:"3.1", name:"Luuk Herssen", element:"Spectro" },
-    { id:28, ver:"3.1", name:"Sigrika",      element:"Aero"    },
   ]},
 ];
 
@@ -478,7 +486,7 @@ let versions = JSON.parse(JSON.stringify(HARDCODED));
 
 const _saved = JSON.parse(localStorage.getItem('wuwa-tracker') || '{}');
 let state            = _saved.state            || {};
-let wishlist         = _saved.wishlist         || [];
+let priority         = _saved.priority         || [];
 let upcoming         = _saved.upcoming         || [];
 let releasedUpcoming = _saved.releasedUpcoming || [];
 
@@ -493,10 +501,11 @@ let allEntries = versions.flatMap(g => g.entries);
 const byId = () => Object.fromEntries(allEntries.map(e => [e.id, e]));
 
 allEntries.forEach(e => {
-  if (!state[e.id]) state[e.id] = { res:false, sig:false, seq:0 };
+  if (!state[e.id]) state[e.id] = { res:false, sig:false, seq:0, wep:0 };
   if (state[e.id].seq === undefined) state[e.id].seq = 0;
+  if (state[e.id].wep === undefined) state[e.id].wep = 0;
 });
-wishlist = wishlist.filter(id => {
+priority = priority.filter(id => {
   const s = state[id]; const upItem = upcoming.find(u => u.uid === id);
   return (allEntries.some(e => e.id === id) || upItem) && !s?.res;
 });
@@ -504,19 +513,19 @@ wishlist = wishlist.filter(id => {
 let uidCounter = Math.max(100, ...upcoming.map(u => u.uid), ...releasedUpcoming.map(u => u.uid)) + 1;
 
 function save() {
-  localStorage.setItem('wuwa-tracker', JSON.stringify({ state, wishlist, upcoming, releasedUpcoming }));
+  localStorage.setItem('wuwa-tracker', JSON.stringify({ state, priority, upcoming, releasedUpcoming }));
 }
 
 /* ─────────────── STATS ─────────────── */
 function updateStats() {
   const total = allEntries.length;
   const got   = allEntries.filter(e => state[e.id]?.res).length;
-  const sig   = allEntries.filter(e => state[e.id]?.sig).length;
-  const wlTotal = wishlist.length;
+  const sig   = allEntries.filter(e => state[e.id]?.wep > 0).length;
+  const wlTotal = priority.length;
   document.getElementById('s-got').textContent  = got;
   document.getElementById('s-skip').textContent = total - got;
   document.getElementById('s-sig').textContent  = sig;
-  document.getElementById('s-wish').textContent = wlTotal;
+  document.getElementById('s-priority').textContent = wlTotal;
   const resPct = total ? Math.round((got/total)*100) : 0;
   const sigPct = total ? Math.round((sig/total)*100) : 0;
   document.getElementById('bar-res').style.width = resPct+'%';
@@ -590,84 +599,100 @@ function setSeq(id, val) {
   const t=document.getElementById(`seq-toggle-${id}`); if(t) t.textContent=`S${state[id].seq>0?state[id].seq:''}`;
 }
 function refreshSeqBtns(id) {
-  for (let i=0;i<=6;i++) { const b=document.getElementById(`seq-${id}-${i}`); if(b) b.classList.toggle('active', i===state[id].seq); }
+  state[id].seq = 0;
+  for (let i=0;i<=6;i++) { const b=document.getElementById(`seq-${id}-${i}`); if(b) b.classList.remove('active'); }
   const t=document.getElementById(`seq-toggle-${id}`); if(t){t.textContent='S';t.classList.remove('open');}
   const p=document.getElementById(`seq-panel-${id}`); if(p) p.classList.remove('open');
 }
 
-/* ─────────────── WISHLIST ─────────────── */
-function isWishlisted(id) { return wishlist.includes(id); }
-
-function toggleWishlist(id) {
-  if (state[id]?.res) return;
-  if (isWishlisted(id)) wishlist = wishlist.filter(x => x !== id);
-  else wishlist.push(id);
+/* ─────────────── WEAPON RANK ─────────────── */
+function setWep(id, val) {
+  state[id].wep = state[id].wep === val ? 0 : val;
   save();
-  const wb = document.getElementById(`wish-btn-${id}`);
-  if (wb) wb.classList.toggle('wishlisted', isWishlisted(id));
-  renderWishlist(); updateStats();
+  for (let i=1;i<=5;i++) { const b=document.getElementById(`wep-${id}-${i}`); if(b) b.classList.toggle('active', i===state[id].wep); }
+  const t=document.getElementById(`wep-toggle-${id}`); if(t) t.textContent=`R${state[id].wep>0?state[id].wep:''}`;
+  updateStats();
+}
+function refreshWepBtns(id) {
+  state[id].wep = 0;
+  for (let i=1;i<=5;i++) { const b=document.getElementById(`wep-${id}-${i}`); if(b) b.classList.remove('active'); }
+  const t=document.getElementById(`wep-toggle-${id}`); if(t){t.textContent='R';t.classList.remove('open');}
+  const p=document.getElementById(`wep-panel-${id}`); if(p) p.classList.remove('open');
 }
 
-function removeFromWishlist(id) {
-  wishlist = wishlist.filter(x => x !== id);
+/* ─────────────── WISHLIST ─────────────── */
+function isPrioritized(id) { return priority.includes(id); }
+
+function togglePriority(id) {
+  if (state[id]?.res) return;
+  if (isPrioritized(id)) priority = priority.filter(x => x !== id);
+  else priority.push(id);
   save();
   const wb = document.getElementById(`wish-btn-${id}`);
-  if (wb) wb.classList.remove('wishlisted');
-  renderWishlist(); updateStats();
+  if (wb) wb.classList.toggle('prioritized', isPrioritized(id));
+  renderPriority(); updateStats();
+}
+
+function removeFromPriority(id) {
+  priority = priority.filter(x => x !== id);
+  save();
+  const wb = document.getElementById(`wish-btn-${id}`);
+  if (wb) wb.classList.remove('prioritized');
+  renderPriority(); updateStats();
 }
 
 let dragSrcId = null;
 
-function renderWishlist() {
-  const list = document.getElementById('wl-list');
+function renderPriority() {
+  const list = document.getElementById('pr-list');
   list.innerHTML = '';
-  if (wishlist.length === 0) {
-    list.innerHTML = '<div class="wishlist-empty">No resonators wishlisted — tap ★ on any unowned resonator to add it.</div>';
+  if (priority.length === 0) {
+    list.innerHTML = '<div class="priority-empty">No resonators prioritized — tap ★ on any unowned resonator to add it.</div>';
     return;
   }
   const map = byId();
-  wishlist.forEach((id, idx) => {
+  priority.forEach((id, idx) => {
     const e = map[id] || upcoming.find(u => u.uid === id);
     if (!e) return;
     const name    = e.name;
     const element = e.element || '';
     const isUp    = !!upcoming.find(u => u.uid === id);
     const item = document.createElement('div');
-    item.className = 'wl-item'; item.draggable = true; item.dataset.id = id;
+    item.className = 'pr-item'; item.draggable = true; item.dataset.id = id;
     item.innerHTML = `
-      <span class="wl-drag-handle">⠿</span>
-      <span class="wl-rank">#${idx+1}</span>
-      <span class="wl-name">${name}</span>
-      ${element ? `<span class="wl-el el-${element.toLowerCase()}">${element}</span>` : ''}
-      ${isUp ? `<span class="wl-upcoming-tag">upcoming</span>` : ''}
-      <button class="wl-remove" onclick="removeFromWishlist(${id})" title="Remove">✕</button>
+      <span class="pr-drag-handle">⠿</span>
+      <span class="pr-rank">#${idx+1}</span>
+      <span class="pr-name">${name}</span>
+      ${element ? `<span class="pr-el el-${element.toLowerCase()}">${element}</span>` : ''}
+      ${isUp ? `<span class="pr-upcoming-tag">upcoming</span>` : ''}
+      <button class="pr-remove" onclick="removeFromPriority(${id})" title="Remove">✕</button>
     `;
     item.addEventListener('dragstart', ev => { dragSrcId=id; ev.dataTransfer.effectAllowed='move'; setTimeout(()=>item.classList.add('dragging'),0); });
-    item.addEventListener('dragend',   () => { item.classList.remove('dragging'); document.querySelectorAll('.wl-item').forEach(i=>i.classList.remove('drag-over')); });
-    item.addEventListener('dragover',  ev => { ev.preventDefault(); document.querySelectorAll('.wl-item').forEach(i=>i.classList.remove('drag-over')); item.classList.add('drag-over'); });
+    item.addEventListener('dragend',   () => { item.classList.remove('dragging'); document.querySelectorAll('.pr-item').forEach(i=>i.classList.remove('drag-over')); });
+    item.addEventListener('dragover',  ev => { ev.preventDefault(); document.querySelectorAll('.pr-item').forEach(i=>i.classList.remove('drag-over')); item.classList.add('drag-over'); });
     item.addEventListener('drop', ev => {
       ev.preventDefault(); if(dragSrcId===id) return;
-      const fi=wishlist.indexOf(dragSrcId), ti=wishlist.indexOf(id);
-      wishlist.splice(fi,1); wishlist.splice(ti,0,dragSrcId);
-      save(); renderWishlist(); updateStats();
+      const fi=priority.indexOf(dragSrcId), ti=priority.indexOf(id);
+      priority.splice(fi,1); priority.splice(ti,0,dragSrcId);
+      save(); renderPriority(); updateStats();
     });
     item.addEventListener('touchstart', ev => { dragSrcId=id; item.classList.add('dragging'); }, {passive:true});
     item.addEventListener('touchmove', ev => {
       ev.preventDefault();
       const t=ev.touches[0]; const els=document.elementsFromPoint(t.clientX,t.clientY);
-      const target=els.find(el=>el.classList.contains('wl-item')&&el!==item);
-      document.querySelectorAll('.wl-item').forEach(i=>i.classList.remove('drag-over'));
+      const target=els.find(el=>el.classList.contains('pr-item')&&el!==item);
+      document.querySelectorAll('.pr-item').forEach(i=>i.classList.remove('drag-over'));
       if(target) target.classList.add('drag-over');
     },{passive:false});
     item.addEventListener('touchend', ev => {
       item.classList.remove('dragging');
       const t=ev.changedTouches[0]; const els=document.elementsFromPoint(t.clientX,t.clientY);
-      const target=els.find(el=>el.classList.contains('wl-item')&&el!==item);
-      document.querySelectorAll('.wl-item').forEach(i=>i.classList.remove('drag-over'));
+      const target=els.find(el=>el.classList.contains('pr-item')&&el!==item);
+      document.querySelectorAll('.pr-item').forEach(i=>i.classList.remove('drag-over'));
       if(target){
-        const fi=wishlist.indexOf(id), toId=parseInt(target.dataset.id), ti=wishlist.indexOf(toId);
-        wishlist.splice(fi,1); wishlist.splice(ti,0,id);
-        save(); renderWishlist(); updateStats();
+        const fi=priority.indexOf(id), toId=parseInt(target.dataset.id), ti=priority.indexOf(toId);
+        priority.splice(fi,1); priority.splice(ti,0,id);
+        save(); renderPriority(); updateStats();
       }
     });
     list.appendChild(item);
@@ -688,8 +713,8 @@ function addUpcoming() {
 
 function deleteUpcoming(uid) {
   upcoming = upcoming.filter(u => u.uid !== uid);
-  wishlist = wishlist.filter(x => x !== uid);
-  save(); renderUpcoming(); renderWishlist(); updateStats();
+  priority = priority.filter(x => x !== uid);
+  save(); renderUpcoming(); renderPriority(); updateStats();
 }
 
 let editingUid = null;
@@ -706,7 +731,7 @@ function confirmEditUpcoming() {
   if (!name) return;
   u.name    = name;
   u.element = document.getElementById('edit-up-el').value || '';
-  save(); closeModal('edit-upcoming'); renderUpcoming(); renderWishlist();
+  save(); closeModal('edit-upcoming'); renderUpcoming(); renderPriority();
 }
 
 let releasingUid = null;
@@ -727,14 +752,14 @@ function confirmRelease() {
   lastGroup.entries.push(newEntry);
   allEntries = versions.flatMap(g => g.entries);
 
-  state[releasingUid] = { res:false, sig:false, seq:0 };
+  state[releasingUid] = { res:false, sig:false, seq:0, wep:0 };
 
   upcoming = upcoming.filter(u => u.uid !== releasingUid);
   releasedUpcoming.push({ uid: releasingUid, name, element });
 
   save(); closeModal('release');
   document.getElementById('tracker').innerHTML = '';
-  render(); renderWishlist(); renderUpcoming(); updateStats();
+  render(); renderPriority(); renderUpcoming(); updateStats();
 }
 
 function renderUpcoming() {
@@ -745,14 +770,14 @@ function renderUpcoming() {
     return;
   }
   upcoming.forEach(u => {
-    const wled = isWishlisted(u.uid);
+    const wled = isPrioritized(u.uid);
     const item = document.createElement('div');
     item.className = 'up-item';
     item.innerHTML = `
       <span class="up-name">${u.name}</span>
       ${u.element ? `<span class="badge el-${u.element.toLowerCase()}">${u.element}</span>` : '<span style="font-size:0.65rem;color:var(--muted);font-family:JetBrains Mono,monospace">?</span>'}
       <div class="up-actions">
-        <button class="up-btn wish-btn ${wled?'wishlisted':''}" id="wish-btn-${u.uid}" title="Wishlist" onclick="toggleWishlist(${u.uid})">★</button>
+        <button class="up-btn wish-btn ${wled?'prioritized':''}" id="wish-btn-${u.uid}" title="Priority" onclick="togglePriority(${u.uid})">★</button>
         <button class="up-btn edit-btn" title="Edit" onclick="openEditUpcoming(${u.uid})">✎</button>
         <button class="up-btn rel-btn"  title="Mark as released" onclick="openReleaseModal(${u.uid})">✓</button>
         <button class="up-btn del-btn"  title="Delete" onclick="deleteUpcoming(${u.uid})">✕</button>
@@ -844,42 +869,54 @@ function render() {
       updateCollapseBtn();
     });
     entries.forEach(e=>{
-      if(!state[e.id]) state[e.id]={res:false,sig:false,seq:0};
+      if(!state[e.id]) state[e.id]={res:false,sig:false,seq:0,wep:0};
+      if(state[e.id].wep===undefined) state[e.id].wep=0;
       const s=state[e.id];
       const row=document.createElement('div');
       row.className=`entry ${s.res?'is-got':'is-skip'}`; row.id=`entry-${e.id}`;
       let seqBtns='';
       for(let i=0;i<=6;i++) seqBtns+=`<button class="seq-btn ${s.seq===i?'active':''}" id="seq-${e.id}-${i}" onclick="setSeq(${e.id},${i})">${i}</button>`;
-      const hasSeq=s.seq>0; const wled=isWishlisted(e.id);
+      let wepBtns='';
+      for(let i=1;i<=5;i++) wepBtns+=`<button class="wep-btn ${s.wep===i?'active':''}" id="wep-${e.id}-${i}" onclick="setWep(${e.id},${i})">${i}</button>`;
+      const wled=isPrioritized(e.id);
       const entryWrap=document.createElement('div'); entryWrap.className='entry-wrap'; entryWrap.id=`wrap-${e.id}`;
       row.innerHTML=`
         <div class="cb-wrap">
-          <input type="checkbox" class="cb cb-res" id="res-${e.id}" ${s.res?'checked':''}><label class="cb-label" for="res-${e.id}">res</label>
-          <div class="cb-sep"></div>
-          <input type="checkbox" class="cb cb-sig" id="sig-${e.id}" ${s.sig?'checked':''}><label class="cb-label" for="sig-${e.id}">sig</label>
+          <input type="checkbox" class="cb cb-res" id="res-${e.id}" ${s.res?'checked':''}> 
         </div>
+        <img class="res-head-icon" src="icons/head_${e.name.replace(/[^a-zA-Z0-9]/g,'_')}.webp" alt="" onerror="this.style.display='none'">
         <div class="res-info">
           <span class="res-name">${e.name}</span>
           ${e.element?`<span class="badge el-${e.element.toLowerCase()}"><img class="badge-icon" src="icons/icon_${e.element}.webp" alt="${e.element}" onerror="this.style.display='none'">${e.element}</span>`:''}
         </div>
-        <button class="wish-btn ${wled?'wishlisted':''}" id="wish-btn-${e.id}" title="Wishlist" onclick="toggleWishlist(${e.id})">★</button>
         <button class="seq-toggle" id="seq-toggle-${e.id}" title="Sequence">S${s.seq>0?s.seq:''}</button>
+        <button class="wep-toggle" id="wep-toggle-${e.id}" title="Weapon rank">R${s.wep>0?s.wep:''}</button>
+        <button class="wish-btn ${wled?'prioritized':''}" id="wish-btn-${e.id}" title="Priority" onclick="togglePriority(${e.id})">★</button>
       `;
       const panel=document.createElement('div'); panel.className=`seq-panel`; panel.id=`seq-panel-${e.id}`;
       panel.innerHTML=`<span class="seq-label">seq</span>${seqBtns}`;
-      entryWrap.appendChild(row); entryWrap.appendChild(panel);
+      const wepPanel=document.createElement('div'); wepPanel.className=`wep-panel`; wepPanel.id=`wep-panel-${e.id}`;
+      wepPanel.innerHTML=`<span class="seq-label" style="color:var(--sig)">rank</span>${wepBtns}`;
+      entryWrap.appendChild(row); entryWrap.appendChild(panel); entryWrap.appendChild(wepPanel);
       row.querySelector(`#seq-toggle-${e.id}`).addEventListener('click',()=>{
         const t=document.getElementById(`seq-toggle-${e.id}`),p=document.getElementById(`seq-panel-${e.id}`);
+        const wp=document.getElementById(`wep-panel-${e.id}`),wt=document.getElementById(`wep-toggle-${e.id}`);
+        if(wp.classList.contains('open')){wp.classList.remove('open');wt.classList.remove('open');}
+        const open=p.classList.toggle('open'); t.classList.toggle('open',open);
+      });
+      row.querySelector(`#wep-toggle-${e.id}`).addEventListener('click',()=>{
+        const t=document.getElementById(`wep-toggle-${e.id}`),p=document.getElementById(`wep-panel-${e.id}`);
+        const sp=document.getElementById(`seq-panel-${e.id}`),st=document.getElementById(`seq-toggle-${e.id}`);
+        if(sp.classList.contains('open')){sp.classList.remove('open');st.classList.remove('open');}
         const open=p.classList.toggle('open'); t.classList.toggle('open',open);
       });
       row.querySelector(`#res-${e.id}`).addEventListener('change',ev=>{
         state[e.id].res=ev.target.checked;
         if(!ev.target.checked){state[e.id].seq=0;refreshSeqBtns(e.id);}
-        if(ev.target.checked&&isWishlisted(e.id)){wishlist=wishlist.filter(x=>x!==e.id);renderWishlist();}
-        const wb=document.getElementById(`wish-btn-${e.id}`); if(wb) wb.classList.toggle('wishlisted',isWishlisted(e.id));
+        if(ev.target.checked&&isPrioritized(e.id)){priority=priority.filter(x=>x!==e.id);renderPriority();}
+        const wb=document.getElementById(`wish-btn-${e.id}`); if(wb) wb.classList.toggle('prioritized',isPrioritized(e.id));
         save(); updateStyle(e.id); updateStats();
       });
-      row.querySelector(`#sig-${e.id}`).addEventListener('change',ev=>{ state[e.id].sig=ev.target.checked; save(); updateStats(); });
       body.appendChild(entryWrap);
     });
     group.appendChild(heading); group.appendChild(body); container.appendChild(group);
@@ -890,24 +927,24 @@ function render() {
 
 /* ─────────────── RESET ─────────────── */
 function resetAll() {
-  if(!confirm('Reset everything including wishlist and upcoming?')) return;
+  if(!confirm('Reset everything including priority and upcoming?')) return;
   allEntries.forEach(e=>{
-    state[e.id]={res:false,sig:false,seq:0};
-    const r=document.getElementById(`res-${e.id}`),s=document.getElementById(`sig-${e.id}`),wb=document.getElementById(`wish-btn-${e.id}`);
-    if(r) r.checked=false; if(s) s.checked=false; if(wb) wb.classList.remove('wishlisted');
-    updateStyle(e.id); refreshSeqBtns(e.id);
+    state[e.id]={res:false,sig:false,seq:0,wep:0};
+    const r=document.getElementById(`res-${e.id}`),wb=document.getElementById(`wish-btn-${e.id}`);
+    if(r) r.checked=false; if(wb) wb.classList.remove('prioritized');
+    updateStyle(e.id); refreshSeqBtns(e.id); refreshWepBtns(e.id);
   });
-  wishlist=[]; upcoming=[]; releasedUpcoming=[];
+  priority=[]; upcoming=[]; releasedUpcoming=[];
   versions=JSON.parse(JSON.stringify(HARDCODED));
   allEntries=versions.flatMap(g=>g.entries);
   localStorage.removeItem('wuwa-tracker');
-  save(); renderWishlist(); renderUpcoming(); updateStats();
+  save(); renderPriority(); renderUpcoming(); updateStats();
 }
 
 /* ─────────────── EXPORT / IMPORT ─────────────── */
 function openModal(type) {
   if(type==='export') {
-    document.getElementById('export-text').value = JSON.stringify({ state, wishlist, upcoming, releasedUpcoming }, null, 2);
+    document.getElementById('export-text').value = JSON.stringify({ state, priority, upcoming, releasedUpcoming }, null, 2);
     document.getElementById('export-msg').textContent='';
   } else if(type==='import') {
     document.getElementById('import-text').value='';
@@ -931,7 +968,7 @@ function doImport() {
   try {
     const p=JSON.parse(raw);
     const pState    = p.state || p;
-    const pWish     = Array.isArray(p.wishlist)          ? p.wishlist          : [];
+    const pWish     = Array.isArray(p.priority)          ? p.priority          : [];
     const pUpcoming = Array.isArray(p.upcoming)          ? p.upcoming          : [];
     const pReleased = Array.isArray(p.releasedUpcoming)  ? p.releasedUpcoming  : [];
     if(typeof pState!=='object'||Array.isArray(pState)) throw new Error();
@@ -946,10 +983,10 @@ function doImport() {
     state={};
     allEntries.forEach(e=>{
       const d=pState[e.id]||pState[String(e.id)];
-      state[e.id]={res:!!d?.res,sig:!!d?.sig,seq:typeof d?.seq==='number'?d.seq:0};
+      state[e.id]={res:!!d?.res,sig:!!d?.sig,seq:typeof d?.seq==='number'?d.seq:0,wep:typeof d?.wep==='number'?d.wep:0};
     });
     upcoming=pUpcoming; releasedUpcoming=pReleased;
-    wishlist=pWish.filter(id=>allEntries.some(e=>e.id===id)||upcoming.find(u=>u.uid===id));
+    priority=pWish.filter(id=>allEntries.some(e=>e.id===id)||upcoming.find(u=>u.uid===id));
     uidCounter=Math.max(100,...upcoming.map(u=>u.uid),...releasedUpcoming.map(u=>u.uid))+1;
 
     save();
@@ -957,16 +994,20 @@ function doImport() {
     render();
 
     allEntries.forEach(e=>{
-      const r=document.getElementById(`res-${e.id}`),s=document.getElementById(`sig-${e.id}`),wb=document.getElementById(`wish-btn-${e.id}`);
-      if(r) r.checked=state[e.id].res; if(s) s.checked=state[e.id].sig;
-      if(wb) wb.classList.toggle('wishlisted',isWishlisted(e.id));
-      updateStyle(e.id); refreshSeqBtns(e.id);
+      const r=document.getElementById(`res-${e.id}`),wb=document.getElementById(`wish-btn-${e.id}`);
+      if(r) r.checked=state[e.id].res;
+      if(wb) wb.classList.toggle('prioritized',isPrioritized(e.id));
+      updateStyle(e.id); refreshSeqBtns(e.id); refreshWepBtns(e.id);
       if(state[e.id].seq>0){
         const t=document.getElementById(`seq-toggle-${e.id}`),btn=document.getElementById(`seq-${e.id}-${state[e.id].seq}`);
         if(t) t.textContent=`S${state[e.id].seq}`; if(btn) btn.classList.add('active');
       }
+      if(state[e.id].wep>0){
+        const t=document.getElementById(`wep-toggle-${e.id}`),btn=document.getElementById(`wep-${e.id}-${state[e.id].wep}`);
+        if(t) t.textContent=`R${state[e.id].wep}`; if(btn) btn.classList.add('active');
+      }
     });
-    renderWishlist(); renderUpcoming(); updateStats();
+    renderPriority(); renderUpcoming(); updateStats();
     msg.textContent='Import successful!'; msg.className='modal-msg';
     setTimeout(()=>closeModal('import'),1200);
   } catch {
@@ -981,13 +1022,13 @@ function doImport() {
 document.getElementById('up-name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addUpcoming(); });
 
 /* ─────────────── INIT ─────────────── */
-makeCollapsible('wl-heading','wl-body');
+makeCollapsible('pr-heading','pr-body');
 makeCollapsible('up-heading','up-body');
 document.getElementById('up-heading').classList.add('collapsed');
 document.getElementById('up-body').classList.add('collapsed');
 document.getElementById('up-body').style.maxHeight = '0';
 render();
-renderWishlist();
+renderPriority();
 renderUpcoming();
 
 /* ─────────────── SNAPSHOT ─────────────── */
@@ -995,13 +1036,13 @@ function openSnapshot() {
   const EL_COLORS_MAP = { Spectro:'#f9e2af', Aero:'#94e2d5', Glacio:'#89dceb', Fusion:'#fab387', Electro:'#cba6f7', Havoc:'#f38ba8' };
   const total = allEntries.length;
   const got   = allEntries.filter(e => state[e.id]?.res).length;
-  const sig   = allEntries.filter(e => state[e.id]?.sig).length;
+  const sig   = allEntries.filter(e => state[e.id]?.wep > 0).length;
 
   let html = `
     <div class="snap-header">
       <div class="snap-stats">
         <div class="snap-stat"><span class="snap-stat-num res">${got}/${total}</span><span class="snap-stat-label">resonators</span></div>
-        <div class="snap-stat"><span class="snap-stat-num sig">${sig}/${total}</span><span class="snap-stat-label">signatures</span></div>
+        <div class="snap-stat"><span class="snap-stat-num sig">${sig}/${total}</span><span class="snap-stat-label">sig weapons</span></div>
       </div>
     </div>
     <div class="snap-ver-grid">`;
@@ -1009,12 +1050,13 @@ function openSnapshot() {
   versions.forEach(({ label, entries }) => {
     html += `<div class="snap-ver-col"><div class="snap-ver-label">${label}</div><div class="snap-row-list">`;
     entries.forEach(e => {
-      const s = state[e.id] || { res:false, sig:false, seq:0 };
+      const s = state[e.id] || { res:false, seq:0, wep:0 };
       const cls = s.res ? 'obtained' : 'not-pulled';
       const color = EL_COLORS_MAP[e.element] || 'var(--muted)';
-      const sigTag = s.sig ? `<span class="snap-sig">sig</span>` : '';
-      const seqTag = s.seq > 0 ? `<span class="snap-seq">S${s.seq}</span>` : '';
-      html += `<div class="snap-row ${cls}"><div class="snap-el-dot" style="background:${color}"></div><span class="snap-row-name">${e.name}</span>${sigTag}${seqTag}</div>`;
+      const seqPart = s.seq > 0 ? `S${s.seq}` : '';
+      const wepPart = s.wep > 0 ? `R${s.wep}` : '';
+      const comboTag = (seqPart || wepPart) ? `<span class="snap-seq">${seqPart}${wepPart}</span>` : '';
+      html += `<div class="snap-row ${cls}"><div class="snap-el-dot" style="background:${color}"></div><span class="snap-row-name">${e.name}</span>${comboTag}</div>`;
     });
     html += `</div></div>`;
   });
